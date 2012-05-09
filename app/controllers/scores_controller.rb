@@ -1,4 +1,6 @@
 class ScoresController < ApplicationController
+  skip_before_filter :verify_authenticity_token
+  respond_to :json
   # GET /scores
   # GET /scores.json
   def index
@@ -40,7 +42,7 @@ class ScoresController < ApplicationController
   # POST /scores
   # POST /scores.json
   def create
-    @score = Score.new(params[:score])
+    @score = Score.new(:score => params[:score], :name => params[:name])
 
     respond_to do |format|
       if @score.save

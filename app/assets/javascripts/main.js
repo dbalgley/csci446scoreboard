@@ -1,11 +1,10 @@
 var guessesLeft = 10;
-var highScores = new Array([9, "HarryJamesPotter"], [3, "ZedCthulhu"], [2, "NearlyDied"]);
-var randomNumber = Math.floor(Math.random() * 101);
-
+var randomNumber = 1  //Math.floor(Math.random() * 101);
+var uname = 'FannyFatbottom';
 
 $(function() {
   updateScore(guessesLeft);
-  populateHighScores(highScores);
+  populateHighScores();
   populateRandNumber(randomNumber);
 });
 
@@ -13,8 +12,10 @@ function guessChecker() {
 	var inputField = document.getElementById("guess");
 	var entry = parseFloat( inputField.value );
 	guess = entry;
+	alert(randomNumber);
 	if(guess == randomNumber) {
 		alert("You are Win.rar!");
+		getName();
 		bigFatWinner(guessesLeft);
 		document.getElementById( "guess" ).value="";
 		return;
@@ -47,16 +48,19 @@ function bigFatLoser(guessesLeft)
 
 function bigFatWinner(guessesLeft)
 {
-	alert(guessesLeft);
-	highScores.push([guessesLeft, "name"]);
-	populateHighScores(highScores);
+
 }
 
-function populateHighScores(scores) {
-	$('div#highScores').empty();
-  for (var i = 0; i < scores.length; ++i) {
-    $('div#highScores').append("<p>" + scores[i][0] + " " + scores[i][1] + "</p>");
-  }
+function populateHighScores() {
+  	$.get("http://localhost:3000/scores", function(scores) {
+  		$('div#highScores').empty();
+
+  		for (var i = 0; i < scores.length; ++i) {
+  			$('div#highScores').append("<p>" + scores[i].name + " " + " " + scores[i].score + "</p>");
+  		}
+  		alert("Number of scores: " + scores.length);
+  	}, 'json' );
+
 }
 
 function updateScore(score) {
@@ -65,4 +69,13 @@ function updateScore(score) {
 
 function populateRandNumber(randomNumber) {
 	$('h2#randomNumber span#randomNumber').append(randomNumber);
+}
+function getName(){
+	var uname = prompt("Please enter your name", "Darth Vader");
+	//highScores.push([guessesLeft, userName]);
+	//insertIntoDB(userName, guessesLeft);
+	//reset();
+	alert("Stuff:" + guessesLeft + uname);
+	$.post('http://localhost:3000/scores', {"name":uname, "score":guessesLeft}, 'json');
+	populateHighScores(highScores); 
 }
